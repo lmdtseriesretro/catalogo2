@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMDT Series Retro</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              whatsapp: '#25D366',
+              instagram: '#E4405F',
+              retro: {
+                900: '#1a0500', // Fondo muy oscuro (casi negro naranja)
+                800: 'rgba(67, 20, 7, 0.9)', // Fondo de tarjetas (marrón naranja oscuro)
+                700: '#9a3412', // Bordes (naranja quemado)
+                600: '#c2410c', // Hover estados
+                100: '#fcd34d', // Texto destacado (ámbar/dorado)
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Fredoka One', 'cursive'], // Fuente redondeada para simular el logo
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone (to compile JSX in browser) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        /* Fondo Gradiente de Naranjas Variados */
+        background: radial-gradient(circle at 50% -10%, #fbbf24 0%, #ea580c 40%, #9a3412 70%, #451a03 100%);
+        background-attachment: fixed;
+        color: #fff;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #2a0a00;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ea580c;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #fb923c;
+      }
+      
+      /* Animación suave para el logo */
+      @keyframes float {
+        0% { transform: translateY(0px) translateX(-50%); }
+        50% { transform: translateY(-5px) translateX(-50%); }
+        100% { transform: translateY(0px) translateX(-50%); }
+      }
+      .logo-float {
+        animation: float 4s ease-in-out infinite;
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- DATA & CONSTANTS ---
+        const CONTACT_NUMBER = '543512417464';
+
+        const POSTS = [
+          {
+            id: '1',
+            title: 'Alf',
+            // Image with rose
+            imageUrl: 'https://m.media-amazon.com/images/M/MV5BNDM5ZWQ1MmItMzk1My00NjhmLWE1NGMtN2E2ZmM4YmE3NWVkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 
+            // Alf logo instead of title text
+            logoUrl: '',
+            // Extra banner image
+            extraImageUrl: 'https://m.media-amazon.com/images/M/MV5BNDM5ZWQ1MmItMzk1My00NjhmLWE1NGMtN2E2ZmM4YmE3NWVkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+            description: 'Gordon Shumway, el extraterrestre de Melmac, se estrella en la cochera de los Tanner. Oculto de las autoridades, este carismático alienígena cambia para siempre la vida de la familia con su humor sarcástico y apetito voraz.'
+          },
+          {
+            id: '2',
+            title: 'El Auto Fantástico',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/63/KITT.jpg',
+            description: 'Michael Knight, un vuelo solitario en un mundo peligroso. Junto a KITT, un Pontiac Trans Am con inteligencia artificial indestructible, lucha contra el crimen defendiendo a los inocentes e indefensos.'
+          },
+          {
+            id: '3',
+            title: 'Los Magníficos',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/6/60/A-Team_Cast.jpg',
+            description: 'En 1972, cuatro de los mejores hombres del ejército fueron encarcelados por un delito que no cometieron. Hoy, buscados todavía por el gobierno, sobreviven como soldados de fortuna.'
+          },
+          {
+            id: '4',
+            title: 'MacGyver',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/6/66/MacGyver_title_screen.jpg',
+            description: 'Angus MacGyver, agente de la Fundación Phoenix, es capaz de resolver cualquier problema utilizando solo su inteligencia, su navaja suiza y objetos cotidianos. Acción e ingenio sin necesidad de armas de fuego.'
+          },
+          {
+            id: '5',
+            title: 'V Invasión Extraterrestre',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/8/87/V_The_Series_intertitle.png',
+            description: 'Naves nodriza cubren los cielos de las ciudades más importantes. Los Visitantes parecen humanos y vienen en paz, pero una resistencia descubre su verdadera naturaleza reptiliana.'
+          },
+          {
+            id: '6',
+            title: 'He-Man y los Amos del Universo',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/8/86/He-Man_and_the_Masters_of_the_Universe_title_card.jpg',
+            description: 'El Príncipe Adam de Eternia se transforma en He-Man, el hombre más poderoso del universo. Junto a sus amigos, defiende el Castillo de Grayskull de las fuerzas malignas de Skeletor.'
+          },
+          {
+            id: '7',
+            title: 'Los Expedientes X',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/4/47/The_X-Files_title_card.png',
+            description: 'La verdad está ahí fuera. Los agentes del FBI Fox Mulder y Dana Scully investigan casos inexplicables, fenómenos paranormales y conspiraciones gubernamentales.'
+          },
+          {
+            id: '8',
+            title: 'Friends',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d6/Friends_season_one_cast.jpg',
+            description: 'Rachel, Monica, Phoebe, Joey, Chandler y Ross. Seis amigos navegando por la vida, el amor y las risas en Manhattan. La sitcom definitiva de los 90 que definió a una generación.'
+          },
+          {
+            id: '9',
+            title: 'El Zorro',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Guy_Williams_Zorro.JPG/600px-Guy_Williams_Zorro.JPG',
+            description: 'En la California de 1820, Don Diego de la Vega lucha contra la injusticia bajo la máscara del Zorro. La legendaria versión de Disney protagonizada por Guy Williams.'
+          },
+          {
+            id: '10',
+            title: 'Dragon Ball Z',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/c/c6/Dragon_Ball_Z_title_card.png',
+            description: 'Goku y los guerreros Z defienden la Tierra de amenazas intergalácticas como Vegeta, Freezer, Cell y Majin Buu en esta legendaria serie de anime llena de acción.'
+          },
+          {
+            id: '11',
+            title: 'El Príncipe del Rap',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/1/11/The_Fresh_Prince_of_Bel-Air_title_card.jpg',
+            description: 'Will Smith, un joven de Filadelfia, es enviado por su madre a vivir con sus tíos ricos en Bel-Air, California, donde su estilo callejero choca con la alta sociedad.'
+          },
+          {
+            id: '12',
+            title: 'Los Caballeros del Zodiaco',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/b/b3/Saint_Seiya_Vol_1.jpg',
+            description: 'Seiya y los santos de bronce luchan para proteger a la diosa Atenea, vistiendo armaduras sagradas inspiradas en las constelaciones y elevando su cosmos al máximo.'
+          },
+          {
+            id: '13',
+            title: 'Tres por Tres',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/5/5a/Full_House_title_card.jpg',
+            description: 'Danny Tanner, un padre viudo, recluta a su cuñado Jesse y a su mejor amigo Joey para ayudar a criar a sus tres hijas: D.J., Stephanie y Michelle en San Francisco.'
+          },
+          {
+            id: '14',
+            title: 'Xena: La Princesa Guerrera',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/37/Xena_Warrior_Princess_title_card.png',
+            description: 'Xena, una poderosa guerrera en busca de redención por sus pecados pasados, viaja por la antigua Grecia luchando contra la injusticia junto a su leal compañera Gabrielle.'
+          },
+          {
+            id: '15',
+            title: 'Buffy, la Cazavampiros',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/2/22/Buffy_The_Vampire_Slayer_Title_Card.jpg',
+            description: 'Buffy Summers es "La Cazadora", una joven elegida por el destino para luchar contra vampiros, demonios y otras fuerzas de la oscuridad mientras intenta sobrevivir a la vida escolar.'
+          },
+          {
+            id: '16',
+            title: 'Casados con Hijos',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/6/69/Married_With_Children_Title_Card.jpg',
+            description: 'Las cómicas desgracias de la familia Bundy: Al, un vendedor de zapatos amargado; Peggy, su esposa adicta a las compras; y sus hijos Kelly y Bud.'
+          },
+           {
+            id: '17',
+            title: 'Guardianes de la Bahía',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/David_Hasselhoff_2013.jpg/640px-David_Hasselhoff_2013.jpg',
+            description: 'Mitch Buchannon lidera un equipo de salvavidas en las playas de Los Ángeles. Acción, rescates dramáticos y romance bajo el sol de California.'
+          },
+          {
+            id: '18',
+            title: 'Los Simpson',
+            imageUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0d/Simpsons_FamilyDonut.png',
+            description: 'Las aventuras satíricas de una familia de clase trabajadora en la ciudad de Springfield. Homero, Marge, Bart, Lisa y Maggie en la serie animada más longeva.'
+          }
+        ];
+
+        // --- ICONS ---
+        const WhatsAppIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.005.575 1.913.846 2.803.846 3.18 0 5.767-2.587 5.768-5.766.001-3.18-2.584-5.767-5.765-5.767zm6.402 11.231c-2.427 3.391-7.145 4.195-10.536 1.767-1.109-.794-1.928-1.859-2.396-3.045l-1.503.393.393-1.516c-.468-1.185-.436-2.531.076-3.774 1.644-3.988 6.229-5.91 10.218-4.265 3.987 1.643 5.91 6.229 4.264 10.217-.194.469-.475.904-.805 1.29l.289-.067zM12.031 8.563c-1.861 0-3.376 1.515-3.376 3.376s1.515 3.376 3.376 3.376 3.376-1.515 3.376-3.376-1.515-3.376-3.376-3.376-1.515-3.376-3.376-3.376-1.515-3.376-3.376-3.376-1.515-3.376-3.376-3.376zm.558 4.793l-.558.558-.559-.558c-.308-.308-.308-.808 0-1.116l.559-.558-.559-.558c-.308-.308-.308-.808 0-1.116l.559-.558c.308-.308.808-.308 1.116 0l.558.558.559-.558c.308-.308.808-.308 1.116 0l.559.558c.308.308.308.808 0 1.116l-.559.558.559.558c.308.308.308.808 0 1.116l-.559.558c-.308.308-.808.308-1.116 0l-.559-.558z" fillRule="evenodd" clipRule="evenodd"/>
+          </svg>
+        );
+
+        const InstagramIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        );
+
+        // --- COMPONENTS ---
+        
+        // Lightbox Component for viewing full images
+        const Lightbox = ({ isOpen, imageSrc, title, onClose }) => {
+            if (!isOpen) return null;
+            
+            return (
+                <div 
+                    className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 animate-fade-in"
+                    onClick={onClose}
+                >
+                    <div className="relative max-w-5xl w-full max-h-screen flex flex-col items-center justify-center">
+                        <button 
+                            onClick={onClose}
+                            className="absolute -top-12 right-0 text-white hover:text-retro-100 transition-colors p-2 z-50 bg-black/50 rounded-full"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        
+                        <div className="relative group" onClick={(e) => e.stopPropagation()}>
+                            <img 
+                                src={imageSrc} 
+                                alt={title} 
+                                className="max-h-[85vh] w-auto max-w-full object-contain rounded-md shadow-2xl border-2 border-retro-700/50"
+                            />
+                        </div>
+                        
+                        <h3 className="mt-4 text-white/90 text-xl font-medium tracking-wide drop-shadow-md text-center bg-black/50 px-4 py-2 rounded-full">
+                            {title}
+                        </h3>
+                    </div>
+                </div>
+            );
+        };
+
+        const Header = () => {
+          return (
+            <header className="bg-retro-900/90 backdrop-blur-md border-b border-retro-700 sticky top-0 z-50 h-24 shadow-2xl">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full relative flex items-center justify-between">
+                  
+                  {/* Left Side: Social */}
+                  <div className="flex items-center gap-4 z-10">
+                     <a 
+                       href="https://www.instagram.com/lmdtseriesretro/" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="group flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+                     >
+                        <div className="w-10 h-10 bg-gradient-to-tr from-yellow-400 via-orange-500 to-red-600 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                            <InstagramIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="hidden md:inline font-medium text-sm">@lmdtseriesretro</span>
+                     </a>
+                  </div>
+
+                  {/* Center: LOGO (Creative Placement) */}
+                  <div className="absolute left-1/2 top-4 transform -translate-x-1/2 z-20 logo-float pointer-events-none md:pointer-events-auto">
+                    <div className="relative">
+                        <div className="flex flex-col items-center justify-center bg-retro-900/0 rounded-full p-2">
+                           {/* Placeholder for real logo image */}
+                           {/* <img src="logo.png" className="h-16 w-auto" alt="LMDT Logo" /> */}
+                           {/* CSS Only Logo fallback */}
+                           <h1 className="font-display text-6xl md:text-7xl text-white tracking-wider drop-shadow-[0_4px_0_rgba(234,88,12,1)]" style={{ webkitTextStroke: '2px #ea580c' }}>
+                             LMDT
+                           </h1>
+                           <div className="bg-retro-600 px-3 py-1 rounded-full -mt-2 shadow-lg border-2 border-white transform -rotate-2">
+                             <span className="text-white font-bold text-xs md:text-sm tracking-[0.2em]">SERIES RETRO</span>
+                           </div>
+                        </div>
+                    </div>
+                  </div>
+                  
+                  {/* Right Side: CTA */}
+                  <div className="flex items-center gap-4 z-10">
+                     <a 
+                       href="#portfolio"
+                       className="hidden md:inline-flex bg-white hover:bg-retro-100 text-retro-900 px-6 py-2 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-orange-500/20 transform hover:-translate-y-0.5 border border-orange-200"
+                     >
+                       Ver Catálogo
+                     </a>
+                     {/* Mobile Only Catalog Icon */}
+                     <a 
+                       href="#portfolio"
+                       className="md:hidden bg-retro-100 p-2 rounded-full text-retro-900 shadow-lg"
+                       aria-label="Ver Catálogo"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                        </svg>
+                     </a>
+                  </div>
+              </div>
+            </header>
+          );
+        };
+
+        const PortfolioItem = ({ post, onOpen }) => {
+          const waLink = `https://wa.me/${CONTACT_NUMBER}?text=${encodeURIComponent('Hola, me interesa la serie: ' + post.title)}`;
+          const [imgError, setImgError] = useState(false);
+          const fallbackImage = "https://placehold.co/800x600/2a1005/FFF?text=" + encodeURIComponent(post.title);
+
+          return (
+            <article className="flex flex-col bg-retro-800 rounded-2xl overflow-hidden shadow-2xl border border-retro-700 hover:border-retro-100 transition-all duration-300 group">
+              {/* 1. IMAGEN */}
+              <div 
+                className="h-64 sm:h-72 w-full overflow-hidden bg-black relative cursor-zoom-in"
+                onClick={() => onOpen(post.imageUrl, post.title)}
+              >
+                 <img 
+                    src={imgError ? fallbackImage : post.imageUrl} 
+                    alt={post.title} 
+                    onError={() => setImgError(true)}
+                    className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                 />
+                 
+                 {/* Visual hint on hover (Zoom Icon) */}
+                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 drop-shadow-lg">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                    </svg>
+                 </div>
+              </div>
+
+              <div className="p-6 flex flex-col flex-grow relative z-10 bg-retro-800">
+                  {/* 2. NOMBRE DE LA SERIE (o LOGO si existe) */}
+                  <div className="mb-3">
+                    {post.logoUrl ? (
+                        <img src={post.logoUrl} alt={post.title} className="h-16 object-contain object-left" />
+                    ) : (
+                        <h3 className="text-2xl font-extrabold text-white tracking-wide">
+                            {post.title}
+                        </h3>
+                    )}
+                  </div>
+
+                  {/* 3. DESCRIPCION */}
+                  <p className="text-orange-100/80 text-sm leading-relaxed mb-6 flex-grow">
+                      {post.description}
+                  </p>
+
+                  {/* 4. LINK WHATSAPP */}
+                  <a 
+                    href={waLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full bg-whatsapp hover:bg-green-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 transition-all shadow-lg hover:shadow-green-900/30 transform hover:-translate-y-1"
+                  >
+                    <WhatsAppIcon className="w-6 h-6" />
+                    <span>Contactar por WhatsApp</span>
+                  </a>
+              </div>
+            </article>
+          );
+        };
+
+        const Footer = () => {
+          return (
+            <footer className="bg-retro-900/90 backdrop-blur border-t border-retro-700 py-12 mt-20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 className="text-2xl font-bold text-white mb-4 drop-shadow-md">LMDT Series Retro</h2>
+                <p className="text-orange-200/60 mb-8 max-w-md mx-auto">
+                  Reviviendo los mejores momentos de la televisión. Tu colección definitiva de clásicos.
+                </p>
+                
+                <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-8">
+                    <a href={`https://wa.me/${CONTACT_NUMBER}`} className="text-green-400 hover:text-green-300 transition-colors flex items-center gap-2 font-medium">
+                        WhatsApp Directo: +{CONTACT_NUMBER}
+                    </a>
+                    <span className="hidden md:block text-retro-700">•</span>
+                    <a href="https://www.instagram.com/lmdtseriesretro/" className="text-pink-400 hover:text-pink-300 transition-colors font-medium">
+                        Síguenos en Instagram
+                    </a>
+                </div>
+
+                <div className="text-sm text-retro-700">
+                  <p>© {new Date().getFullYear()} LMDT Series Retro. Todos los derechos reservados.</p>
+                </div>
+              </div>
+            </footer>
+          );
+        };
+
+        // --- MAIN APP COMPONENT ---
+        const App = () => {
+          // State for Lightbox
+          const [lightbox, setLightbox] = useState({ isOpen: false, src: '', title: '' });
+
+          const openLightbox = (src, title) => {
+              setLightbox({ isOpen: true, src, title });
+              // Prevent scrolling when lightbox is open
+              document.body.style.overflow = 'hidden';
+          };
+
+          const closeLightbox = () => {
+              setLightbox({ ...lightbox, isOpen: false });
+              // Restore scrolling
+              document.body.style.overflow = 'auto';
+          };
+
+          return (
+            <div className="min-h-screen flex flex-col font-sans bg-black/30">
+              <Lightbox 
+                isOpen={lightbox.isOpen} 
+                imageSrc={lightbox.src} 
+                title={lightbox.title} 
+                onClose={closeLightbox} 
+              />
+
+              <Header />
+              
+              <main id="portfolio" className="flex-grow pt-24 pb-20"> 
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center">
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        Catálogo <span className="text-retro-100">Retro</span>
+                    </h2>
+                    <p className="text-lg text-orange-50 font-medium max-w-2xl mx-auto drop-shadow-sm">
+                        VENTA DIGITAL DE SERIES CLÁSICAS - CARTOON - ANIME - LIVE ACTION - CONSULTA POR TU SERIE FAVORITA.  
+                    </p>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {POSTS.map((post) => (
+                      <PortfolioItem key={post.id} post={post} onOpen={openLightbox} />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="max-w-4xl mx-auto px-4 mt-24">
+                    <div className="bg-gradient-to-br from-retro-800 to-retro-900 rounded-3xl p-8 md:p-12 text-center border border-retro-700 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600"></div>
+                        <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">¿Buscas una serie específica?</h3>
+                        <p className="text-orange-200/80 mb-8">
+                            Si no encuentras lo que buscas en el catálogo, escríbenos. Tenemos cientos de títulos en stock.
+                        </p>
+                        <a 
+                           href={`https://wa.me/${CONTACT_NUMBER}?text=${encodeURIComponent("Hola, estoy buscando una serie específica...")}`}
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           className="inline-block bg-retro-100 text-retro-900 hover:bg-white font-bold py-3 px-8 rounded-full transition-colors transform hover:scale-105 shadow-lg"
+                        >
+                            Contactar Soporte
+                        </a>
+                    </div>
+                </div>
+              </main>
+
+              <Footer />
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
